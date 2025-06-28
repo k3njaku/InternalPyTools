@@ -139,12 +139,22 @@ if st.session_state.df is not None:
 # -------------------------------------------------------------
 if st.session_state.df is not None:
     st.sidebar.markdown("## Manage Pivots")
-    copy_new = st.sidebar.checkbox("Copy filters to new pivot", value=False)
+    copy_new = st.sidebar.checkbox("Copy configuration to new pivot", value=False)
     if st.sidebar.button("Add New Pivot"):
         new_cfg = default_pivot_config(st.session_state.df)
         if copy_new and st.session_state.multi_pivots:
             src = st.session_state.multi_pivots[st.session_state.active_pivot]
-            new_cfg["filters"] = [dict(f) for f in src.get("filters", [])]
+            for key in [
+                "index_cols",
+                "column_cols",
+                "value_agg_list",
+                "filters",
+                "fill_value_enabled",
+                "custom_fill_value",
+                "margins_enabled",
+                "margins_name",
+            ]:
+                new_cfg[key] = json.loads(json.dumps(src.get(key)))
         st.session_state.multi_pivots.append(new_cfg)
         st.session_state.active_pivot = len(st.session_state.multi_pivots) - 1
     if st.session_state.multi_pivots:
@@ -158,11 +168,21 @@ if st.session_state.df is not None:
         if st.sidebar.button("Remove Selected Pivot") and len(st.session_state.multi_pivots) > 0:
             st.session_state.multi_pivots.pop(st.session_state.active_pivot)
             st.session_state.active_pivot = max(0, st.session_state.active_pivot - 1)
-        if st.sidebar.button("Copy Filters to Other Pivots"):
+        if st.sidebar.button("Copy Configuration to Other Pivots"):
             src = st.session_state.multi_pivots[st.session_state.active_pivot]
             for i, pv in enumerate(st.session_state.multi_pivots):
                 if i != st.session_state.active_pivot:
-                    pv["filters"] = [dict(f) for f in src.get("filters", [])]
+                    for key in [
+                        "index_cols",
+                        "column_cols",
+                        "value_agg_list",
+                        "filters",
+                        "fill_value_enabled",
+                        "custom_fill_value",
+                        "margins_enabled",
+                        "margins_name",
+                    ]:
+                        pv[key] = json.loads(json.dumps(src.get(key)))
 
 # -------------------------------------------------------------
 # Main pivot UI

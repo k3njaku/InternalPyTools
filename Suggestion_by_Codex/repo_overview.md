@@ -21,4 +21,4 @@ The repository includes some CSV files used for testing and `saved_pivot_views.j
 This directory contains the new `pivot_tool_perfect.py`, which consolidates features from both pivot tool versions and lets you download filtered datasets beneath each pivot table, along with this overview file.
 
 ## Codexv2
-Contains `pivot_by_codex_v6.py`, a further refinement that allows copying filter settings from the active pivot to other pivots or to a newly created pivot.
+Contains `pivot_by_codex_v6.py`, a further refinement that allows copying an entire pivot configuration—including rows/columns selection, aggregations and filters—from the active pivot to other pivots or to a newly created pivot.
