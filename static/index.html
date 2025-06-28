@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pivot Codex V5 - Advanced Pivot Table Creator</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-table"></i>
+                    <h1>Pivot Codex V5</h1>
+                </div>
+                <div class="header-actions">
+                    <button id="saveViewsBtn" class="btn btn-secondary" title="Save all pivot configurations">
+                        <i class="fas fa-save"></i> Save Views
+                    </button>
+                    <button id="loadViewsBtn" class="btn btn-secondary" title="Load saved configurations">
+                        <i class="fas fa-folder-open"></i> Load Views
+                    </button>
+                    <div class="session-info">
+                        <i class="fas fa-user"></i>
+                        <span id="sessionId">Session: default</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="upload-section">
+                    <h3><i class="fas fa-upload"></i> Data Upload</h3>
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-content">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Drag & drop your CSV file here</p>
+                            <p>or</p>
+                            <button class="btn btn-primary" id="selectFileBtn">
+                                <i class="fas fa-file-csv"></i> Select CSV File
+                            </button>
+                            <input type="file" id="fileInput" accept=".csv" style="display: none;">
+                        </div>
+                    </div>
+                    <div id="uploadStatus" class="upload-status"></div>
+                </div>
+
+                <div class="data-info" id="dataInfo" style="display: none;">
+                    <h4><i class="fas fa-info-circle"></i> Data Information</h4>
+                    <div class="info-item">
+                        <span class="label">Rows:</span>
+                        <span id="dataRows">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Columns:</span>
+                        <span id="dataColumns">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">File:</span>
+                        <span id="fileName">-</span>
+                    </div>
+                </div>
+
+                <div class="pivot-management" id="pivotManagement" style="display: none;">
+                    <h3><i class="fas fa-cogs"></i> Pivot Management</h3>
+                    <button class="btn btn-success btn-full" id="addPivotBtn">
+                        <i class="fas fa-plus"></i> Add New Pivot
+                    </button>
+                    
+                    <div class="pivot-list" id="pivotList">
+                        <!-- Pivot tabs will be added here dynamically -->
+                    </div>
+
+                    <div class="bulk-actions" id="bulkActions" style="display: none;">
+                        <h4><i class="fas fa-copy"></i> Copy Filters</h4>
+                        <div class="copy-filter-section">
+                            <label for="sourceSelect">From Pivot:</label>
+                            <select id="sourceSelect" class="form-control">
+                                <option value="">Select source pivot...</option>
+                            </select>
+                            
+                            <label for="targetSelect">To Pivots:</label>
+                            <select id="targetSelect" class="form-control" multiple>
+                                <!-- Options will be populated dynamically -->
+                            </select>
+                            
+                            <button class="btn btn-info btn-full" id="copyFiltersBtn">
+                                <i class="fas fa-copy"></i> Copy Filters
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Welcome Screen -->
+                <div class="welcome-screen" id="welcomeScreen">
+                    <div class="welcome-content">
+                        <i class="fas fa-table welcome-icon"></i>
+                        <h2>Welcome to Pivot Codex V5</h2>
+                        <p>Advanced Multi-Pivot Table Creator with modern UI</p>
+                        <div class="features">
+                            <div class="feature">
+                                <i class="fas fa-upload"></i>
+                                <span>Upload CSV files with drag & drop</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-filter"></i>
+                                <span>Advanced filtering with copy functionality</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-table"></i>
+                                <span>Multiple pivot tables in one session</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-save"></i>
+                                <span>Persistent state management</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-download"></i>
+                                <span>Export as CSV or Python code</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-keyboard"></i>
+                                <span>Optimized for keyboard & mouse users</span>
+                            </div>
+                        </div>
+                        <p class="start-instruction">Upload a CSV file to get started!</p>
+                    </div>
+                </div>
+
+                <!-- Pivot Configuration -->
+                <div class="pivot-config" id="pivotConfig" style="display: none;">
+                    <div class="config-header">
+                        <div class="config-title">
+                            <h3 id="configTitle">Pivot Configuration</h3>
+                            <input type="text" id="pivotNameInput" class="pivot-name-input" placeholder="Enter pivot name...">
+                        </div>
+                        <div class="config-actions">
+                            <button class="btn btn-danger" id="deletePivotBtn" title="Delete this pivot">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <button class="btn btn-primary" id="generatePivotBtn" title="Generate/Update pivot table">
+                                <i class="fas fa-play"></i> Generate
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="config-content">
+                        <div class="config-section">
+                            <h4><i class="fas fa-rows"></i> Rows (Index)</h4>
+                            <div class="multi-select" id="indexSelect">
+                                <div class="select-input">
+                                    <input type="text" placeholder="Search columns..." class="search-input">
+                                    <div class="dropdown-arrow">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </div>
+                                </div>
+                                <div class="dropdown-content">
+                                    <!-- Column options will be populated here -->
+                                </div>
+                                <div class="selected-items">
+                                    <!-- Selected columns will appear here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="config-section">
+                            <h4><i class="fas fa-columns"></i> Columns</h4>
+                            <div class="multi-select" id="columnSelect">
+                                <div class="select-input">
+                                    <input type="text" placeholder="Search columns..." class="search-input">
+                                    <div class="dropdown-arrow">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </div>
+                                </div>
+                                <div class="dropdown-content">
+                                    <!-- Column options will be populated here -->
+                                </div>
+                                <div class="selected-items">
+                                    <!-- Selected columns will appear here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="config-section">
+                            <h4><i class="fas fa-calculator"></i> Values & Aggregations</h4>
+                            <div class="value-agg-list" id="valueAggList">
+                                <!-- Value aggregation items will be added here -->
+                            </div>
+                            <button class="btn btn-secondary btn-sm" id="addValueAggBtn">
+                                <i class="fas fa-plus"></i> Add Value/Aggregation
+                            </button>
+                        </div>
+
+                        <div class="config-section">
+                            <h4><i class="fas fa-filter"></i> Filters</h4>
+                            <div class="filter-list" id="filterList">
+                                <!-- Filter items will be added here -->
+                            </div>
+                            <button class="btn btn-secondary btn-sm" id="addFilterBtn">
+                                <i class="fas fa-plus"></i> Add Filter
+                            </button>
+                        </div>
+
+                        <div class="config-section">
+                            <h4><i class="fas fa-wrench"></i> Advanced Options</h4>
+                            <div class="advanced-options">
+                                <div class="option-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="fillValueEnabled">
+                                        <span class="checkmark"></span>
+                                        Use custom fill value
+                                    </label>
+                                    <input type="text" id="customFillValue" placeholder="Fill value..." class="form-control" disabled>
+                                </div>
+                                <div class="option-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="marginsEnabled">
+                                        <span class="checkmark"></span>
+                                        Add margins (totals)
+                                    </label>
+                                    <input type="text" id="marginsName" placeholder="Margins name..." class="form-control" value="All_Totals" disabled>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pivot Results -->
+                <div class="pivot-results" id="pivotResults" style="display: none;">
+                    <div class="results-header">
+                        <h3><i class="fas fa-table"></i> Pivot Table Results</h3>
+                        <div class="results-actions">
+                            <button class="btn btn-success" id="downloadCsvBtn" title="Download as CSV">
+                                <i class="fas fa-file-csv"></i> CSV
+                            </button>
+                            <button class="btn btn-info" id="downloadCodeBtn" title="Download Python code">
+                                <i class="fas fa-code"></i> Code
+                            </button>
+                            <button class="btn btn-warning" id="downloadFilteredBtn" title="Download filtered data">
+                                <i class="fas fa-filter"></i> Filtered Data
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="results-content">
+                        <div class="pivot-table-container">
+                            <table id="pivotTable" class="pivot-table">
+                                <!-- Pivot table will be rendered here -->
+                            </table>
+                        </div>
+                        
+                        <div class="results-stats" id="resultsStats">
+                            <!-- Statistics will be shown here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error Display -->
+                <div class="error-display" id="errorDisplay" style="display: none;">
+                    <div class="error-content">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Error</h3>
+                        <p id="errorMessage"></p>
+                        <button class="btn btn-secondary" onclick="hideError()">
+                            <i class="fas fa-times"></i> Dismiss
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <p id="loadingMessage">Processing...</p>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div class="toast-container" id="toastContainer">
+            <!-- Toast notifications will appear here -->
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+# Pivot Codex V5 Requirements
+# Advanced Multi-Pivot Table Creator
+
+# Core dependencies
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pandas==2.1.3
+numpy==1.24.3
+
+# File handling
+python-multipart==0.0.6
+
+# Additional utilities
+python-dateutil==2.8.2
+
+# Optional dependencies for enhanced functionality
+# Uncomment if needed:
+# openpyxl==3.1.2          # For Excel file support
+# xlsxwriter==3.1.9        # For Excel writing
+# pyarrow==14.0.1          # For Parquet support and better performance
+# plotly==5.17.0           # For interactive charts
+# dash==2.14.2             # Alternative UI framework
